@@ -307,6 +307,9 @@ dependencies {
     androidTestImplementation "androidx.test:runner:1.5.2"
     androidTestImplementation "androidx.room:room-testing:${androidxRoomVersion}"
     androidTestImplementation "org.assertj:assertj-core:3.23.1"
+
+/** Bitscuit **/
+    implementation 'com.github.arpitmx:bitscuit:1.0.6'
 }
 
 static String getGitWorkingBranch() {
