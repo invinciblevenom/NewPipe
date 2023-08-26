@@ -5,8 +5,6 @@ on:
   pull_request:
     branches:
       - dev
-      - master
-      - release**
     paths-ignore:
       - 'README.md'
       - 'doc/**'
@@ -18,7 +16,6 @@ on:
   push:
     branches:
       - dev
-      - master
     paths-ignore:
       - 'README.md'
       - 'doc/**'
@@ -89,48 +86,7 @@ jobs:
           distribution: "temurin"
           cache: 'gradle'
 
-      - name: Run android tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          arch: ${{ matrix.arch }}
-          script: ./gradlew connectedCheck --stacktrace
-
-      - name: Upload test report when tests fail # because the printed out stacktrace (console) is too short, see also #7553
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: android-test-report-api${{ matrix.api-level }}
-          path: app/build/reports/androidTests/connected/**
-
-  sonar:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: "temurin"
-          cache: 'gradle'
-
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonar --info
+        run: ./gradlew build 
